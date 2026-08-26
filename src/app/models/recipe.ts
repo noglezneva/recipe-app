@@ -1,8 +1,8 @@
 export interface Recipe {
-  id: number;
+  id: string;
   title: string;
   category: 'Завтрак' | 'Ужин' | 'Десерт';
-  time: number;
+  time: number | null;
   icon: string;
   description: string;
   ingredients: string[];

@@ -1,4 +1,19 @@
-import { Injectable, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject, signal } from '@angular/core';
+import {
+  catchError,
+  forkJoin,
+  map,
+  Observable,
+  of
+} from 'rxjs';
+
+import {
+  ApiRecipe,
+  ApiRecipePreview,
+  ApiRecipeResponse,
+  ApiRecipesResponse
+} from '../models/api-recipe';
 
 import { Recipe } from '../models/recipe';
 
@@ -6,149 +21,88 @@ import { Recipe } from '../models/recipe';
   providedIn: 'root'
 })
 export class RecipeService {
-  private readonly storageKey = 'recipe-app-favorites';
+  private readonly http = inject(HttpClient);
 
-  readonly recipes: Recipe[] = [
-    {
-      id: 1,
-      title: 'Тост с авокадо',
-      category: 'Завтрак',
-      time: 10,
-      icon: '🥑',
-      description: 'Хрустящий тост с авокадо, лимоном и яйцом.',
-      ingredients: [
-        '2 ломтика хлеба',
-        '1 авокадо',
-        '1 яйцо',
-        'Лимонный сок',
-        'Соль и перец'
-      ],
-      steps: [
-        'Поджарьте хлеб.',
-        'Разомните авокадо с лимонным соком, солью и перцем.',
-        'Приготовьте яйцо.',
-        'Выложите авокадо и яйцо на тост.'
-      ]
-    },
-    {
-      id: 2,
-      title: 'Паста в сливочно-томатном соусе',
-      category: 'Ужин',
-      time: 25,
-      icon: '🍝',
-      description: 'Быстрая паста в сливочно-томатном соусе для простого ужина.',
-      ingredients: [
-        '200 г пасты',
-        '200 мл томатного соуса',
-        '80 мл сливок',
-        '1 зубчик чеснока',
-        'Пармезан'
-      ],
-      steps: [
-        'Отварите пасту.',
-        'Обжарьте чеснок в течение одной минуты.',
-        'Добавьте томатный соус и сливки.',
-        'Добавьте пасту и посыпьте пармезаном.'
-      ]
-    },
-    {
-      id: 3,
-      title: 'Панкейки с ягодами',
-      category: 'Завтрак',
-      time: 20,
-      icon: '🥞',
-      description: 'Мягкие панкейки с ягодами и йогуртом.',
-      ingredients: [
-        '150 г муки',
-        '1 яйцо',
-        '180 мл молока',
-        '1 ч. л. разрыхлителя',
-        'Ягоды'
-      ],
-      steps: [
-        'Смешайте сухие ингредиенты.',
-        'Добавьте яйцо и молоко.',
-        'Обжарьте панкейки с двух сторон.',
-        'Подавайте с ягодами.'
-      ]
-    },
-    {
-      id: 4,
-      title: 'Шоколадный кекс в кружке',
-      category: 'Десерт',
-      time: 7,
-      icon: '🍫',
-      description: 'Небольшой шоколадный кекс, который можно приготовить прямо в кружке.',
-      ingredients: [
-        '4 ст. л. муки',
-        '2 ст. л. какао',
-        '2 ст. л. сахара',
-        '4 ст. л. молока',
-        '1 ст. л. растительного масла'
-      ],
-      steps: [
-        'Смешайте все ингредиенты в кружке.',
-        'Готовьте в микроволновке около 60–90 секунд.',
-        'Дайте кексу остыть в течение минуты.'
-      ]
-    },
-    {
-      id: 5,
-      title: 'Рис с курицей и овощами',
-      category: 'Ужин',
-      time: 30,
-      icon: '🍚',
-      description: 'Простое блюдо с курицей, рисом и овощами.',
-      ingredients: [
-        '150 г курицы',
-        '100 г риса',
-        'Овощная смесь',
-        'Соевый соус',
-        'Кунжут'
-      ],
-      steps: [
-        'Приготовьте рис.',
-        'Обжарьте курицу до золотистой корочки.',
-        'Добавьте овощи и соевый соус.',
-        'Подавайте вместе с рисом.'
-      ]
-    },
-    {
-      id: 6,
-      title: 'Йогурт с яблоком',
-      category: 'Десерт',
-      time: 5,
-      icon: '🍎',
-      description: 'Лёгкий десерт с йогуртом, яблоком и корицей.',
-      ingredients: [
-        'Греческий йогурт',
-        '1 яблоко',
-        'Корица',
-        'Мёд',
-        'Гранола'
-      ],
-      steps: [
-        'Нарежьте яблоко кубиками.',
-        'Выложите слоями йогурт, яблоко и гранолу.',
-        'Добавьте корицу и мёд.'
-      ]
-    }
-  ];
+  private readonly apiUrl =
+    'https://forkify-api.jonas.io/api/v2/recipes';
 
-  readonly favoriteIds = signal<number[]>(this.readFavorites());
+  private readonly storageKey =
+    'recipe-app-favorites';
 
-  getById(id: number): Recipe | undefined {
-    return this.recipes.find((recipe) => recipe.id === id);
+  readonly favoriteIds =
+    signal<string[]>(this.readFavorites());
+
+  getRecipes(): Observable<Recipe[]> {
+    return this.searchRecipes('pizza');
   }
 
-  isFavorite(id: number): boolean {
+  searchRecipes(query: string): Observable<Recipe[]> {
+    const search = query.trim() || 'pizza';
+
+    return this.http
+      .get<ApiRecipesResponse>(
+        this.apiUrl,
+        {
+          params: {
+            search
+          }
+        }
+      )
+      .pipe(
+        map((response) =>
+          response.data.recipes.map((recipe) =>
+            this.convertPreview(recipe)
+          )
+        )
+      );
+  }
+
+  getById(id: string): Observable<Recipe> {
+    return this.http
+      .get<ApiRecipeResponse>(
+        `${this.apiUrl}/${id}`
+      )
+      .pipe(
+        map((response) =>
+          this.convertRecipe(response.data.recipe)
+        )
+      );
+  }
+
+  getFavoriteRecipes(): Observable<Recipe[]> {
+    const ids = this.favoriteIds();
+
+    if (ids.length === 0) {
+      return of([]);
+    }
+
+    const requests = ids.map((id) =>
+      this.getById(id).pipe(
+        catchError(() => of(null))
+      )
+    );
+
+    return forkJoin(requests).pipe(
+      map((recipes) =>
+        recipes.filter(
+          (recipe): recipe is Recipe =>
+            recipe !== null
+        )
+      )
+    );
+  }
+
+  isFavorite(id: string): boolean {
     return this.favoriteIds().includes(id);
   }
 
-  toggleFavorite(id: number): void {
+  toggleFavorite(id: string): void {
     this.favoriteIds.update((ids) =>
       ids.includes(id)
-        ? ids.filter((favoriteId) => favoriteId !== id)
+        ? ids.filter(
+            (favoriteId) =>
+              favoriteId !== id
+          )
         : [...ids, id]
     );
 
@@ -158,18 +112,86 @@ export class RecipeService {
     );
   }
 
-  getFavoriteRecipes(): Recipe[] {
-    return this.recipes.filter((recipe) =>
-      this.favoriteIds().includes(recipe.id)
-    );
+  private convertPreview(
+    recipe: ApiRecipePreview
+  ): Recipe {
+    return {
+      id: recipe.id,
+      title: recipe.title,
+      category: this.getCategory(recipe.title),
+      time: null,
+      icon: '🍽️',
+      description: `Автор: ${recipe.publisher}`,
+      ingredients: [],
+      steps: []
+    };
   }
 
-  private readFavorites(): number[] {
+  private convertRecipe(
+    recipe: ApiRecipe
+  ): Recipe {
+    return {
+      id: recipe.id,
+      title: recipe.title,
+      category: this.getCategory(recipe.title),
+      time: recipe.cooking_time,
+      icon: '🍽️',
+      description: `Автор: ${recipe.publisher}`,
+
+      ingredients: recipe.ingredients.map(
+        (ingredient) => {
+          const quantity =
+            ingredient.quantity ?? '';
+
+          return [
+            quantity,
+            ingredient.unit,
+            ingredient.description
+          ]
+            .filter(Boolean)
+            .join(' ');
+        }
+      ),
+
+      steps: [
+        'Полная инструкция доступна по ссылке на источник рецепта.'
+      ]
+    };
+  }
+
+  private getCategory(
+    title: string
+  ): Recipe['category'] {
+    const name = title.toLowerCase();
+
+    if (
+      name.includes('cake') ||
+      name.includes('cookie') ||
+      name.includes('brownie') ||
+      name.includes('dessert')
+    ) {
+      return 'Десерт';
+    }
+
+    if (
+      name.includes('breakfast') ||
+      name.includes('pancake') ||
+      name.includes('waffle') ||
+      name.includes('toast')
+    ) {
+      return 'Завтрак';
+    }
+
+    return 'Ужин';
+  }
+
+  private readFavorites(): string[] {
     try {
-      const saved = localStorage.getItem(this.storageKey);
+      const saved =
+        localStorage.getItem(this.storageKey);
 
       return saved
-        ? JSON.parse(saved) as number[]
+        ? JSON.parse(saved) as string[]
         : [];
     } catch {
       return [];

@@ -1,33 +1,89 @@
 <section class="hero">
   <h1>Что приготовим сегодня?</h1>
-  <p class="subtitle">Ищите рецепты, фильтруйте их и сохраняйте в избранное.</p>
+
+  <p class="subtitle">
+    Ищите рецепты, фильтруйте их
+    и сохраняйте в избранное.
+  </p>
 </section>
 
-<section class="filters" aria-label="Фильтры рецептов">
+<section
+  class="filters"
+  aria-label="Фильтры рецептов"
+>
   <input
     type="search"
     [(ngModel)]="query"
     placeholder="Поиск рецептов..."
     aria-label="Поиск рецептов"
+    (keyup.enter)="search()"
   >
 
-  <select [(ngModel)]="selectedCategory" aria-label="Фильтр по категории">
-    @for (category of categories; track category) {
-      <option [value]="category">{{ category }}</option>
+  <button
+    type="button"
+    (click)="search()"
+  >
+    Найти
+  </button>
+
+  <select
+    [(ngModel)]="selectedCategory"
+    aria-label="Фильтр по категории"
+  >
+    @for (
+      category of categories;
+      track category
+    ) {
+      <option [value]="category">
+        {{ category }}
+      </option>
     }
   </select>
 </section>
 
-@if (filteredRecipes.length > 0) {
-  <section class="grid">
-    @for (recipe of filteredRecipes; track recipe.id) {
-      <app-recipe-card [recipe]="recipe" />
-    }
-  </section>
-} @else {
+@if (isLoading) {
+
   <div class="empty">
-    <span>🔎</span>
-    <h2>Ничего не найдено</h2>
-    <p>Попробуйте изменить запрос или выбрать другую категорию.</p>
+    <p>Загружаем рецепты...</p>
   </div>
+
+} @else if (errorMessage) {
+
+  <div class="empty">
+    <h2>Ошибка</h2>
+
+    <p>{{ errorMessage }}</p>
+  </div>
+
+} @else if (
+  filteredRecipes.length > 0
+) {
+
+  <section class="grid">
+
+    @for (
+      recipe of filteredRecipes;
+      track recipe.id
+    ) {
+      <app-recipe-card
+        [recipe]="recipe"
+      />
+    }
+
+  </section>
+
+} @else {
+
+  <div class="empty">
+
+    <span>🔎</span>
+
+    <h2>Ничего не найдено</h2>
+
+    <p>
+      Попробуйте другой запрос.
+    </p>
+
+  </div>
+
 }

@@ -1,26 +1,73 @@
 <article class="card">
-  <div class="icon" aria-hidden="true">{{ recipe.icon }}</div>
+
+  <div
+    class="icon"
+    aria-hidden="true"
+  >
+    {{ recipe.icon }}
+  </div>
 
   <div class="content">
+
     <div class="meta">
-      <span>{{ recipe.category }}</span>
-      <span>•</span>
-      <span>{{ recipe.time }} мин</span>
+
+      <span>
+        {{ recipe.category }}
+      </span>
+
+      @if (recipe.time !== null) {
+        <span>•</span>
+
+        <span>
+          {{ recipe.time }} мин
+        </span>
+      }
+
     </div>
 
-    <h2>{{ recipe.title }}</h2>
-    <p>{{ recipe.description }}</p>
+    <h2>
+      {{ recipe.title }}
+    </h2>
+
+    <p>
+      {{ recipe.description }}
+    </p>
 
     <div class="actions">
-      <a class="details" [routerLink]="['/recipes', recipe.id]">Подробнее →</a>
+
+      <a
+        class="details"
+        [routerLink]="[
+          '/recipes',
+          recipe.id
+        ]"
+      >
+        Посмотреть рецепт →
+      </a>
+
       <button
         type="button"
         class="favorite"
         (click)="toggleFavorite()"
-        [attr.aria-label]="recipeService.isFavorite(recipe.id) ? 'Удалить из избранного' : 'Добавить в избранное'"
+        [attr.aria-label]="
+          recipeService.isFavorite(
+            recipe.id
+          )
+            ? 'Удалить из избранного'
+            : 'Добавить в избранное'
+        "
       >
-        {{ recipeService.isFavorite(recipe.id) ? '♥' : '♡' }}
+        {{
+          recipeService.isFavorite(
+            recipe.id
+          )
+            ? '♥'
+            : '♡'
+        }}
       </button>
+
     </div>
+
   </div>
+
 </article>

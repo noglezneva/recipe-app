@@ -1,5 +1,6 @@
 import { Component, Input, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+
 import { Recipe } from '../../models/recipe';
 import { RecipeService } from '../../services/recipe.service';
 
@@ -11,11 +12,15 @@ import { RecipeService } from '../../services/recipe.service';
   styleUrl: './recipe-card.component.css'
 })
 export class RecipeCardComponent {
-  @Input({ required: true }) recipe!: Recipe;
+  @Input({ required: true })
+  recipe!: Recipe;
 
-  readonly recipeService = inject(RecipeService);
+  readonly recipeService =
+    inject(RecipeService);
 
   toggleFavorite(): void {
-    this.recipeService.toggleFavorite(this.recipe.id);
+    this.recipeService.toggleFavorite(
+      this.recipe.id
+    );
   }
 }
