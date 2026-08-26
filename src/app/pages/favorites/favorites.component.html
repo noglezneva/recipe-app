@@ -1,0 +1,18 @@
+<section class="heading">
+  <h1>Любимые рецепты</h1>
+</section>
+
+@if (recipes.length > 0) {
+  <section class="grid">
+    @for (recipe of recipes; track recipe.id) {
+      <app-recipe-card [recipe]="recipe" />
+    }
+  </section>
+} @else {
+  <div class="empty">
+    <span>♡</span>
+    <h2>В избранном пока ничего нет</h2>
+    <p>Сохраните рецепт, который хотите приготовить позже.</p>
+    <a routerLink="/recipes">Посмотреть рецепты</a>
+  </div>
+}
