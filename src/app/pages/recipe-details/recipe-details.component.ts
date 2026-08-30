@@ -67,32 +67,6 @@ export class RecipeDetailsComponent
           this.isLoading = false;
         }
       });
-
-        if (!id) {
-          this.errorMessage =
-            'Некорректный ID рецепта.';
-
-          this.isLoading = false;
-
-          return;
-        }
-
-        this.recipeService
-          .getById(id)
-          .subscribe({
-            next: (recipe) => {
-              this.recipe = recipe;
-
-              this.isLoading = false;
-            },
-
-            error: () => {
-              this.errorMessage =
-                'Не удалось загрузить рецепт.';
-
-              this.isLoading = false;
-            }
-          });
   }
 
   toggleFavorite(): void {
