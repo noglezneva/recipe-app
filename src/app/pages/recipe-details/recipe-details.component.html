@@ -1,31 +1,20 @@
-<a
-  class="back"
-  routerLink="/recipes"
->
-  ← Назад к рецептам
-</a>
+<a class="back" routerLink="/recipes"> ← Назад к рецептам </a>
 
 @if (isLoading) {
-
   <div class="not-found">
     <p>Загружаем рецепт...</p>
   </div>
-
 } @else if (recipe) {
-
   <article class="details">
-
     <div class="recipe-head">
-
       <img
         class="recipe-image"
         [src]="recipe.imageUrl"
         [alt]="recipe.title"
         decoding="async"
-      >
+      />
 
       <div>
-
         <p class="meta">
           {{ recipe.category }}
 
@@ -42,77 +31,50 @@
           {{ recipe.description }}
         </p>
 
-        <button
-          type="button"
-          (click)="toggleFavorite()"
-        >
+        <button type="button" (click)="toggleFavorite()">
           {{
             recipeService.isFavorite(recipe.id)
               ? '♥ Удалить из избранного'
               : '♡ Добавить в избранное'
           }}
         </button>
-
       </div>
-
     </div>
 
     <div class="columns">
-
       <section>
-
         <h2>Ингредиенты</h2>
 
         <ul>
-          @for (
-            ingredient of recipe.ingredients;
-            track ingredient
-          ) {
+          @for (ingredient of recipe.ingredients; track ingredient) {
             <li>
               {{ ingredient }}
             </li>
           }
         </ul>
-
       </section>
 
       <section>
-
         <h2>Приготовление</h2>
 
         <ol>
-          @for (
-            step of recipe.steps;
-            track $index
-          ) {
+          @for (step of recipe.steps; track $index) {
             <li>
               {{ step }}
             </li>
           }
         </ol>
-
       </section>
-
     </div>
-
   </article>
-
 } @else {
-
   <div class="not-found">
-
-    <h1>
-      Рецепт не найден
-    </h1>
+    <h1>Рецепт не найден</h1>
 
     <p>
       {{ errorMessage }}
     </p>
 
-    <a routerLink="/recipes">
-      Вернуться к рецептам
-    </a>
-
+    <a routerLink="/recipes"> Вернуться к рецептам </a>
   </div>
-
 }

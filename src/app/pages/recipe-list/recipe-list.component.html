@@ -1,40 +1,26 @@
 <section class="hero">
   <h1>Что приготовим сегодня?</h1>
 
-  <p class="subtitle">
-    Ищите рецепты, фильтруйте их
-    и сохраняйте в избранное.
-  </p>
+  <p class="subtitle">Ищите рецепты, фильтруйте их и сохраняйте в избранное.</p>
 </section>
 
-<section
-  class="filters"
-  aria-label="Фильтры рецептов"
->
+<section class="filters" aria-label="Фильтры рецептов">
   <input
     type="search"
     [(ngModel)]="query"
     placeholder="Поиск рецептов..."
     aria-label="Поиск рецептов"
     (keyup.enter)="search()"
-  >
+  />
 
-  <button
-    type="button"
-    (click)="search()"
-  >
-    Найти
-  </button>
+  <button type="button" (click)="search()">Найти</button>
 
   <select
     [(ngModel)]="selectedCategory"
     (change)="onCategoryChange()"
     aria-label="Фильтр по категории"
   >
-    @for (
-      category of categories;
-      track category
-    ) {
+    @for (category of categories; track category) {
       <option [value]="category">
         {{ category }}
       </option>
@@ -43,43 +29,24 @@
 </section>
 
 @if (isLoading) {
-
   <div class="empty">
     <p>Загружаем рецепты...</p>
   </div>
-
 } @else if (errorMessage) {
-
   <div class="empty">
     <h2>Ошибка</h2>
 
     <p>{{ errorMessage }}</p>
   </div>
-
-} @else if (
-  filteredRecipes.length > 0
-) {
-
+} @else if (filteredRecipes.length > 0) {
   <section class="grid">
-
-    @for (
-      recipe of paginatedRecipes;
-      track recipe.id
-    ) {
-      <app-recipe-card
-        [recipe]="recipe"
-      />
+    @for (recipe of paginatedRecipes; track recipe.id) {
+      <app-recipe-card [recipe]="recipe" />
     }
-
   </section>
 
   @if (totalPages > 1) {
-
-    <nav
-      class="pagination"
-      aria-label="Навигация по страницам"
-    >
-
+    <nav class="pagination" aria-label="Навигация по страницам">
       <button
         type="button"
         class="pagination-button"
@@ -89,56 +56,34 @@
         ←
       </button>
 
-      @for (
-        page of pages;
-        track page
-      ) {
-
+      @for (page of pages; track page) {
         <button
           type="button"
           class="pagination-button"
-          [class.active]="
-            page === currentPage
-          "
-          [attr.aria-current]="
-            page === currentPage
-              ? 'page'
-              : null
-          "
+          [class.active]="page === currentPage"
+          [attr.aria-current]="page === currentPage ? 'page' : null"
           (click)="goToPage(page)"
         >
           {{ page }}
         </button>
-
       }
 
       <button
         type="button"
         class="pagination-button"
-        [disabled]="
-          currentPage === totalPages
-        "
+        [disabled]="currentPage === totalPages"
         (click)="goToPage(currentPage + 1)"
       >
         →
       </button>
-
     </nav>
-
   }
-
 } @else {
-
   <div class="empty">
-
     <span>🔎</span>
 
     <h2>Ничего не найдено</h2>
 
-    <p>
-      Попробуйте другой запрос.
-    </p>
-
+    <p>Попробуйте другой запрос.</p>
   </div>
-
 }

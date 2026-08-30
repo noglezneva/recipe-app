@@ -3,53 +3,31 @@
 </section>
 
 @if (isLoading) {
-
   <div class="empty">
     <p>Загружаем избранное...</p>
   </div>
-
 } @else if (errorMessage) {
-
   <div class="empty">
-
     <h2>Ошибка</h2>
 
     <p>
       {{ errorMessage }}
     </p>
-
   </div>
-
 } @else if (recipes.length > 0) {
-
   <section class="grid">
-
     @for (recipe of recipes; track recipe.id) {
-      <app-recipe-card
-        [recipe]="recipe"
-      />
+      <app-recipe-card [recipe]="recipe" />
     }
-
   </section>
-
 } @else {
-
   <div class="empty">
-
     <span>♡</span>
 
-    <h2>
-      В избранном пока ничего нет
-    </h2>
+    <h2>В избранном пока ничего нет</h2>
 
-    <p>
-      Сохраните рецепт, который хотите приготовить позже.
-    </p>
+    <p>Сохраните рецепт, который хотите приготовить позже.</p>
 
-    <a routerLink="/recipes">
-      Посмотреть рецепты
-    </a>
-
+    <a routerLink="/recipes"> Посмотреть рецепты </a>
   </div>
-
 }

@@ -9,18 +9,15 @@ import { RecipeService } from '../../services/recipe.service';
   standalone: true,
   imports: [RouterLink],
   templateUrl: './recipe-card.component.html',
-  styleUrl: './recipe-card.component.css'
+  styleUrl: './recipe-card.component.css',
 })
 export class RecipeCardComponent {
   @Input({ required: true })
   recipe!: Recipe;
 
-  readonly recipeService =
-    inject(RecipeService);
+  readonly recipeService = inject(RecipeService);
 
   toggleFavorite(): void {
-    this.recipeService.toggleFavorite(
-      this.recipe.id
-    );
+    this.recipeService.toggleFavorite(this.recipe.id);
   }
 }
