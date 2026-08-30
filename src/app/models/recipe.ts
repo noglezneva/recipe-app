@@ -3,7 +3,7 @@ export interface Recipe {
   title: string;
   category: 'Завтрак' | 'Ужин' | 'Десерт';
   time: number | null;
-  icon: string;
+  imageUrl: string;
   description: string;
   ingredients: string[];
   steps: string[];

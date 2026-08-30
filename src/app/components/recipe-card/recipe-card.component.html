@@ -1,11 +1,12 @@
 <article class="card">
 
-  <div
-    class="icon"
-    aria-hidden="true"
+  <img
+    class="image"
+    [src]="recipe.imageUrl"
+    [alt]="recipe.title"
+    loading="lazy"
+    decoding="async"
   >
-    {{ recipe.icon }}
-  </div>
 
   <div class="content">
 

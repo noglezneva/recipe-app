@@ -13,18 +13,17 @@
 
 .recipe-head {
   display: grid;
-  grid-template-columns: 260px 1fr;
+  grid-template-columns: 320px 1fr;
   align-items: center;
   gap: 40px;
 }
 
-.big-icon {
-  display: grid;
+.recipe-image {
+  display: block;
+  width: 100%;
   aspect-ratio: 1;
-  place-items: center;
   border-radius: 32px;
-  background: linear-gradient(135deg, #f8eee5, #f2e7d8);
-  font-size: 7rem;
+  object-fit: cover;
 }
 
 .meta {
@@ -93,7 +92,7 @@ li {
     grid-template-columns: 1fr;
   }
 
-  .big-icon {
-    max-width: 260px;
+  .recipe-image {
+    max-width: 320px;
   }
 }

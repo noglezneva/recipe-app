@@ -120,7 +120,9 @@ export class RecipeService {
       title: recipe.title,
       category: this.getCategory(recipe.title),
       time: null,
-      icon: '🍽️',
+      imageUrl: this.normalizeImageUrl(
+        recipe.image_url
+      ),
       description: `Автор: ${recipe.publisher}`,
       ingredients: [],
       steps: []
@@ -135,7 +137,9 @@ export class RecipeService {
       title: recipe.title,
       category: this.getCategory(recipe.title),
       time: recipe.cooking_time,
-      icon: '🍽️',
+      imageUrl: this.normalizeImageUrl(
+        recipe.image_url
+      ),
       description: `Автор: ${recipe.publisher}`,
 
       ingredients: recipe.ingredients.map(
@@ -157,6 +161,15 @@ export class RecipeService {
         'Полная инструкция доступна по ссылке на источник рецепта.'
       ]
     };
+  }
+
+  private normalizeImageUrl(
+    url: string
+  ): string {
+    return url.replace(
+      /^http:\/\//,
+      'https://'
+    );
   }
 
   private getCategory(

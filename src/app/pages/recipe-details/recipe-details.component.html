@@ -17,12 +17,12 @@
 
     <div class="recipe-head">
 
-      <div
-        class="big-icon"
-        aria-hidden="true"
+      <img
+        class="recipe-image"
+        [src]="recipe.imageUrl"
+        [alt]="recipe.title"
+        decoding="async"
       >
-        {{ recipe.icon }}
-      </div>
 
       <div>
 
