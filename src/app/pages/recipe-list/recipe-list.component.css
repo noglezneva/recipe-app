@@ -26,7 +26,10 @@ h1 {
 
 .filters {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 210px;
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto
+    210px;
   gap: 12px;
   margin-bottom: 28px;
 }
@@ -46,13 +49,62 @@ select {
 input:focus,
 select:focus {
   border-color: #a85f3c;
-  box-shadow: 0 0 0 3px rgba(168, 95, 60, 0.12);
+  box-shadow:
+    0 0 0 3px
+    rgba(168, 95, 60, 0.12);
+}
+
+.filters button {
+  border: 0;
+  border-radius: 14px;
+  background: #201a17;
+  padding: 14px 20px;
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
   gap: 20px;
+}
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 36px;
+}
+
+.pagination-button {
+  min-width: 42px;
+  height: 42px;
+  border: 1px solid #ddd3cb;
+  border-radius: 12px;
+  background: white;
+  color: #201a17;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+
+.pagination-button:hover:not(:disabled) {
+  border-color: #a85f3c;
+}
+
+.pagination-button.active {
+  border-color: #201a17;
+  background: #201a17;
+  color: white;
+}
+
+.pagination-button:disabled {
+  cursor: default;
+  opacity: 0.4;
 }
 
 .empty {
@@ -77,7 +129,8 @@ select:focus {
 
 @media (max-width: 900px) {
   .grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -85,5 +138,9 @@ select:focus {
   .filters,
   .grid {
     grid-template-columns: 1fr;
+  }
+
+  .pagination {
+    margin-top: 24px;
   }
 }

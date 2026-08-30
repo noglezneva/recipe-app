@@ -28,6 +28,7 @@
 
   <select
     [(ngModel)]="selectedCategory"
+    (change)="onCategoryChange()"
     aria-label="Фильтр по категории"
   >
     @for (
@@ -62,7 +63,7 @@
   <section class="grid">
 
     @for (
-      recipe of filteredRecipes;
+      recipe of paginatedRecipes;
       track recipe.id
     ) {
       <app-recipe-card
@@ -71,6 +72,60 @@
     }
 
   </section>
+
+  @if (totalPages > 1) {
+
+    <nav
+      class="pagination"
+      aria-label="Навигация по страницам"
+    >
+
+      <button
+        type="button"
+        class="pagination-button"
+        [disabled]="currentPage === 1"
+        (click)="goToPage(currentPage - 1)"
+      >
+        ←
+      </button>
+
+      @for (
+        page of pages;
+        track page
+      ) {
+
+        <button
+          type="button"
+          class="pagination-button"
+          [class.active]="
+            page === currentPage
+          "
+          [attr.aria-current]="
+            page === currentPage
+              ? 'page'
+              : null
+          "
+          (click)="goToPage(page)"
+        >
+          {{ page }}
+        </button>
+
+      }
+
+      <button
+        type="button"
+        class="pagination-button"
+        [disabled]="
+          currentPage === totalPages
+        "
+        (click)="goToPage(currentPage + 1)"
+      >
+        →
+      </button>
+
+    </nav>
+
+  }
 
 } @else {
 

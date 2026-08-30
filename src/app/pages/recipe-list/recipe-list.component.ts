@@ -44,6 +44,10 @@ export class RecipeListComponent
 
   errorMessage = '';
 
+  currentPage = 1;
+
+  readonly pageSize = 12;
+
   readonly categories = [
     'Все',
     'Завтрак',
@@ -64,7 +68,7 @@ export class RecipeListComponent
       .subscribe({
         next: (recipes) => {
           this.recipes = recipes;
-
+          this.currentPage = 1;
           this.isLoading = false;
         },
 
@@ -86,7 +90,7 @@ export class RecipeListComponent
       .subscribe({
         next: (recipes) => {
           this.recipes = recipes;
-
+          this.currentPage = 1;
           this.isLoading = false;
         },
 
@@ -99,16 +103,59 @@ export class RecipeListComponent
       });
   }
 
+  onCategoryChange(): void {
+    this.currentPage = 1;
+  }
+
+  goToPage(page: number): void {
+    if (
+      page < 1 ||
+      page > this.totalPages
+    ) {
+      return;
+    }
+
+    this.currentPage = page;
+
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }
+
   get filteredRecipes(): Recipe[] {
     return this.recipes.filter(
-      (recipe) => {
-        const matchesCategory =
-          this.selectedCategory === 'Все' ||
-          recipe.category ===
-            this.selectedCategory;
+      (recipe) =>
+        this.selectedCategory === 'Все' ||
+        recipe.category ===
+          this.selectedCategory
+    );
+  }
 
-        return matchesCategory;
-      }
+  get paginatedRecipes(): Recipe[] {
+    const start =
+      (this.currentPage - 1) *
+      this.pageSize;
+
+    return this.filteredRecipes.slice(
+      start,
+      start + this.pageSize
+    );
+  }
+
+  get totalPages(): number {
+    return Math.ceil(
+      this.filteredRecipes.length /
+        this.pageSize
+    );
+  }
+
+  get pages(): number[] {
+    return Array.from(
+      {
+        length: this.totalPages
+      },
+      (_, index) => index + 1
     );
   }
 }
